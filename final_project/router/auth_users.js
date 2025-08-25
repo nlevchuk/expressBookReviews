@@ -2,9 +2,9 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import books from './booksdb.js';
 
-const regd_users = express.Router();
-
 let users = [];
+
+const expirationTime = 60 * 60; // 1 hour
 
 const isValid = (username) => { //returns boolean
   const user = users.find(u => u.username === username);
@@ -12,15 +12,35 @@ const isValid = (username) => { //returns boolean
 }
 
 const authenticatedUser = (username, password) => { //returns boolean
-//write code to check if username and password match the one we have in records.
+  const user = users.find((u) => {
+    return u.username === username && u.password === password;
+  });
+  return user !== undefined;
 }
 
 const registerUser = (username, password) => users.push({ username, password });
 
+const regd_users = express.Router();
+
 // Only registered users can login
 regd_users.post('/login', (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Username and/or password are not provided' });
+  }
+
+  if (authenticatedUser(username, password)) {
+    const accessToken = jwt.sign(
+      { data: password},
+      'access',
+      { expiresIn: expirationTime }
+    );
+    req.session.authorization = { username, accessToken };
+
+    return res.status(200).json({ message: `User ${username} successfully logged in` });
+  } else {
+    return res.status(404).json({ message: 'User with provided username and password not found. Go to /register first' });
+  }
 });
 
 // Add a book review
