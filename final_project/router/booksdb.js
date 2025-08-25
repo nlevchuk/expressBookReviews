@@ -15,4 +15,8 @@ export const getAllBooks = () => books;
 
 export const findBookByISBN = (isbn) => books[isbn];
 
+export const findBooksByAuthor = (author) => {
+  return Object.values(books).filter(book => book.author === author);
+}
+
 export default books; // Remove the default books

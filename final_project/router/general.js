@@ -1,6 +1,6 @@
 import express from 'express';
 import { isValid, users } from './auth_users.js';
-import { getAllBooks, findBookByISBN } from './booksdb.js';
+import { getAllBooks, findBookByISBN, findBooksByAuthor } from './booksdb.js';
 
 const public_users = express.Router();
 
@@ -29,10 +29,17 @@ public_users.get('/isbn/:isbn', (req, res) => {
   }
  });
   
-// Get book details based on author
+// Get all books based on author
 public_users.get('/author/:author', (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const { author } = req.params;
+  // Note! An author can have more than one book
+  const books = findBooksByAuthor(author);
+
+  if (books.length > 0) {
+    return res.status(200).json(books);
+  } else {
+    return res.status(404).json({ message: `Books with author ${author} not found` });
+  }
 });
 
 // Get all books based on title
