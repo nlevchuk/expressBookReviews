@@ -28,4 +28,12 @@ export const addReviewToBook = (isbn, review, username) => {
   return true;
 }
 
+export const findReviewToBook = (isbn, username) => {
+  return books[isbn].reviews[username];
+}
+
+export const removeReviewFromBook = (isbn, username) => {
+  return delete books[isbn].reviews[username];
+}
+
 export default books; // Remove the default books

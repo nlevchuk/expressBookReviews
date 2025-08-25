@@ -1,6 +1,11 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { findBookByISBN, addReviewToBook } from './booksdb.js';
+import {
+  findBookByISBN,
+  addReviewToBook,
+  findReviewToBook,
+  removeReviewFromBook,
+} from './booksdb.js';
 
 let users = [];
 
@@ -59,6 +64,24 @@ regd_users.put('/auth/review/:isbn', (req, res) => {
   const { username } = req.session.authorization;
   addReviewToBook(isbn, review, username);
   return res.status(200).json({ message: `Review for "${book.title}" has been added successfully` });
+});
+
+// Delete a book review
+regd_users.delete('/auth/review/:isbn', (req, res) => {
+  const isbn = Number.parseInt(req.params.isbn);
+  const book = findBookByISBN(isbn);
+  if (!book) {
+    return res.status(404).json({ message: `Book with ISBN ${isbn} not found` });
+  }
+
+  const { username } = req.session.authorization;
+  const userReview = findReviewToBook(isbn, username);
+  if (!userReview) {
+    return res.status(404).json({ message: "User's review not found" });
+  }
+
+  removeReviewFromBook(isbn, username);
+  return res.status(200).json({ message: `Review for "${book.title}" has been deleted successfully` });
 });
 
 export {
