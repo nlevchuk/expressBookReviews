@@ -86,7 +86,6 @@ regd_users.delete('/auth/review/:isbn', (req, res) => {
 
 export {
   isValid,
-  users, // Exclude from the export
   registerUser,
   regd_users as authenticated,
 }

@@ -35,5 +35,3 @@ export const findReviewToBook = (isbn, username) => {
 export const removeReviewFromBook = (isbn, username) => {
   return delete books[isbn].reviews[username];
 }
-
-export default books; // Remove the default books
