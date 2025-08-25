@@ -1,6 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import books from './booksdb.js';
+import { findBookByISBN, addReviewToBook } from './booksdb.js';
 
 let users = [];
 
@@ -45,8 +45,20 @@ regd_users.post('/login', (req, res) => {
 
 // Add a book review
 regd_users.put('/auth/review/:isbn', (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const isbn = Number.parseInt(req.params.isbn);
+  const book = findBookByISBN(isbn);
+  if (!book) {
+    return res.status(404).json({ message: `Book with ISBN ${isbn} not found` });
+  }
+
+  const { review } = req.query;
+  if (!review) {
+    return res.status(400).json({ message: 'The "review" query parameter is missing or empty' });
+  }
+
+  const { username } = req.session.authorization;
+  addReviewToBook(isbn, review, username);
+  return res.status(200).json({ message: `Review for "${book.title}" has been added successfully` });
 });
 
 export {

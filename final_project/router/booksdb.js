@@ -23,4 +23,9 @@ export const findBooksByTitle = (title) => {
   return Object.values(books).filter(book => book.title === title);
 }
 
+export const addReviewToBook = (isbn, review, username) => {
+  books[isbn].reviews[username] = review; // add or modify review
+  return true;
+}
+
 export default books; // Remove the default books
