@@ -13,4 +13,6 @@ const books = {
 
 export const getAllBooks = () => books;
 
+export const findBookByISBN = (isbn) => books[isbn];
+
 export default books; // Remove the default books
