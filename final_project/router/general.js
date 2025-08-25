@@ -1,6 +1,6 @@
 import express from 'express';
-import books from './booksdb.js';
 import { isValid, users } from './auth_users.js';
+import { getAllBooks } from './booksdb.js';
 
 const public_users = express.Router();
 
@@ -11,8 +11,10 @@ public_users.post('/register', (req, res) => {
 
 // Get the book list available in the shop
 public_users.get('/', (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const books = getAllBooks();
+  // Note! The task hint says to use JSON.stringify to show data nicely on the client.
+  // It is not necessary since "res.json" already does the stringifying and sets the right Content-Type.
+  return res.status(200).json(books);
 });
 
 // Get book details based on ISBN
