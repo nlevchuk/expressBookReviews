@@ -1,6 +1,11 @@
 import express from 'express';
 import { isValid, users } from './auth_users.js';
-import { getAllBooks, findBookByISBN, findBooksByAuthor } from './booksdb.js';
+import {
+  getAllBooks,
+  findBookByISBN,
+  findBooksByAuthor,
+  findBooksByTitle,
+} from './booksdb.js';
 
 const public_users = express.Router();
 
@@ -44,8 +49,15 @@ public_users.get('/author/:author', (req, res) => {
 
 // Get all books based on title
 public_users.get('/title/:title', (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const { title } = req.params;
+  // Note! More than one book can have similar titles
+  const books = findBooksByTitle(title);
+
+  if (books.length > 0) {
+    return res.status(200).json(books);
+  } else {
+    return res.status(404).json({ message: `Books with title ${title} not found` });
+  }
 });
 
 //  Get book review

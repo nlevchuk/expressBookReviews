@@ -19,4 +19,8 @@ export const findBooksByAuthor = (author) => {
   return Object.values(books).filter(book => book.author === author);
 }
 
+export const findBooksByTitle = (title) => {
+  return Object.values(books).filter(book => book.title === title);
+}
+
 export default books; // Remove the default books
