@@ -1,17 +1,26 @@
 import express from 'express';
-import { isValid, users } from './auth_users.js';
 import {
   getAllBooks,
   findBookByISBN,
   findBooksByAuthor,
   findBooksByTitle,
 } from './booksdb.js';
+import { isValid, registerUser } from './auth_users.js';
 
 const public_users = express.Router();
 
 public_users.post('/register', (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Username and/or password are not provided' });
+  }
+
+  if (isValid(username)) {
+    res.status(409).json({ message: "User already exists!" });
+  } else {
+    registerUser(username, password);
+    res.status(200).json({ message: "User has been registered successfully!" });
+  }
 });
 
 // Get the book list available in the shop
