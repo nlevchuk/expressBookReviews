@@ -30,6 +30,23 @@ public_users.get('/', (req, res) => {
   // It is not necessary since "res.json" already does the stringifying and sets the right Content-Type.
   return res.status(200).json(books);
 });
+/*
+  // Using Promises
+  public_users.get('/', (req, res) => {
+    return getAllBooks().then(books => res.status(200).json(books));
+  });
+ 
+  // Using async/await
+  public_users.get('/', async (req, res) => {
+    const books = await getAllBooks();
+    return res.status(200).json(books);
+  });
+
+  // Modified version of the function localed in the booksdb.js
+  export const getAllBooks = () => Promise.resolve(books);
+  OR
+  export const getAllBooks = () => new Promise((resolve) => resolve(books));
+*/
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', (req, res) => {
@@ -41,7 +58,38 @@ public_users.get('/isbn/:isbn', (req, res) => {
   } else {
     return res.status(404).json({ message: `Book with ISBN ${isbn} not found` });
   }
- });
+});
+/*
+  // Using Promises
+  public_users.get('/isbn/:isbn', (req, res) => {
+    const isbn = Number.parseInt(req.params.isbn);
+
+    return findBookByISBN(isbn).then(book => {
+      if (book) {
+        return res.status(200).json(book);
+      } else {
+        return res.status(404).json({ message: `Book with ISBN ${isbn} not found` });
+      }
+    });
+  });
+
+  // Using async/await
+  public_users.get('/isbn/:isbn', async (req, res) => {
+    const isbn = Number.parseInt(req.params.isbn);
+    const book = await findBookByISBN(isbn);
+
+    if (book) {
+      return res.status(200).json(book);
+    } else {
+      return res.status(404).json({ message: `Book with ISBN ${isbn} not found` });
+    }
+  });
+
+  // Modified version of the function localed in the booksdb.js
+  export const findBookByISBN = (isbn) => Promise.resolve(books[isbn]);
+  OR
+  export const findBookByISBN = (isbn) => new Promise((resolve) => resolve(books[isbn]));
+*/
   
 // Get all books based on author
 public_users.get('/author/:author', (req, res) => {
@@ -55,6 +103,38 @@ public_users.get('/author/:author', (req, res) => {
     return res.status(404).json({ message: `Books with author ${author} not found` });
   }
 });
+/*
+  // Let's say the findBooksByAuthor function either returns books or throws an error, if no books are found
+  // Hypothetical scenario designed to illustrate the rejection pathway
+
+  // Using Promises
+  public_users.get('/author/:author', (req, res) => {
+    const { author } = req.params;
+
+    return findBooksByAuthorOrError(author)
+      .then(books => res.status(200).json(books))
+      .catch(() => {
+        return res.status(404).json({ message: `Books with author ${author} not found` });
+      });
+  });
+
+  // Using async/await
+  public_users.get('/author/:author', async (req, res) => {
+    const { author } = req.params;
+    try {
+      const books = await findBooksByAuthorOrError(author);
+      return res.status(200).json(books);
+    } catch () {
+      return res.status(404).json({ message: `Books with author ${author} not found` });
+    }
+  });
+
+  // Modified version of the function localed in the booksdb.js
+  export const findBooksByAuthorOrError = (author) => new Promise((resolve, reject) => {
+    const bks = Object.values(books).filter(book => book.author === author);
+    return (bks.length > 0) ? resolve(bks) : reject(null);
+  });
+*/
 
 // Get all books based on title
 public_users.get('/title/:title', (req, res) => {
@@ -68,6 +148,38 @@ public_users.get('/title/:title', (req, res) => {
     return res.status(404).json({ message: `Books with title ${title} not found` });
   }
 });
+/*
+  // Using Promises
+  public_users.get('/title/:title', (req, res) => {
+    const { title } = req.params;
+
+    return findBooksByTitle(title).then(books => {
+      if (books.length > 0) {
+        return res.status(200).json(books);
+      } else {
+        return res.status(404).json({ message: `Books with title ${title} not found` });
+      }
+    });
+  });
+
+  // Using async/await
+  public_users.get('/title/:title', async (req, res) => {
+    const { title } = req.params;
+    const books = await findBooksByTitle(title);
+
+    if (books.length > 0) {
+      return res.status(200).json(books);
+    } else {
+      return res.status(404).json({ message: `Books with title ${title} not found` });
+    }
+  });
+
+  // Modified version of the function localed in the booksdb.js
+  export const findBooksByTitle = (title) => {
+    const bks = Object.values(books).filter(book => book.title === title);
+    return Promise.resolve(bks);
+  }
+*/
 
 //  Get book review
 public_users.get('/review/:isbn', (req, res) => {
