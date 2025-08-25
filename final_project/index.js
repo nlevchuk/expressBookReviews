@@ -16,8 +16,21 @@ app.use('/customer', session({
   saveUninitialized: true,
 }))
 
-app.use("/customer/auth/*", (req, res, next) => {
-  //Write the authenication mechanism here
+app.use('/customer/auth/*', (req, res, next) => {
+  const auth = req.session.authorization;
+  if (!auth) {
+    return res.status(401).json({ message: 'User not logged in' });
+  }
+
+  const { accessToken } = auth;
+  jwt.verify(accessToken, 'access', (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'User not authenticated' });
+    } else {
+      req.user = user;
+      next();
+    }
+  });
 });
 
 app.use('/customer', customer_routes);
