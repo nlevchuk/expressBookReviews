@@ -107,35 +107,38 @@ public_users.get('/author/:author', (req, res) => {
   }
 });
 /*
-  // Let's say the findBooksByAuthor function either returns books or throws an error, if no books are found
-  // Hypothetical scenario designed to illustrate the rejection pathway
-
   // Using Promises
   public_users.get('/author/:author', (req, res) => {
-    const { author } = req.params;
+    const author = (req.params.author + "").toLocaleLowerCase();
 
-    return findBooksByAuthorOrError(author)
-      .then(books => res.status(200).json(books))
-      .catch(() => {
+    return findBooksByAuthor(author)
+      .then(books => res.status(200).json(serializeAuthoredBooks(books)))
+      .catch((error) => {
         return res.status(404).json({ message: `Books with author ${author} not found` });
       });
   });
 
   // Using async/await
   public_users.get('/author/:author', async (req, res) => {
-    const { author } = req.params;
+    const author = (req.params.author + "").toLocaleLowerCase();
+
     try {
-      const books = await findBooksByAuthorOrError(author);
-      return res.status(200).json(books);
-    } catch () {
+      const books = await findBooksByAuthor(author);
+      return res.status(200).json(serializeAuthoredBooks(books));
+    } catch (error) {
       return res.status(404).json({ message: `Books with author ${author} not found` });
     }
   });
 
   // Modified version of the function localed in the booksdb.js
-  export const findBooksByAuthorOrError = (author) => new Promise((resolve, reject) => {
-    const bks = Object.values(books).filter(book => book.author === author);
-    return (bks.length > 0) ? resolve(bks) : reject(null);
+  export const findBooksByAuthor = (author) => new Promise((resolve, reject) => {
+    const result = {};
+    for (const [isbn, book] of Object.entries(books)) {
+      if (book.author.toLocaleLowerCase().match(author)) {
+        result[isbn] = book;
+      }
+    }
+    return Object.keys(result).length > 0 ? resolve(result) : reject(null);
   });
 */
 
