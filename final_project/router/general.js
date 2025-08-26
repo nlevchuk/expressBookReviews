@@ -156,11 +156,11 @@ public_users.get('/title/:title', (req, res) => {
 /*
   // Using Promises
   public_users.get('/title/:title', (req, res) => {
-    const { title } = req.params;
+    const title = (req.params.title + "").toLocaleLowerCase();
 
-    return findBooksByTitle(title).then(books => {
-      if (books.length > 0) {
-        return res.status(200).json(books);
+    return findBooksByTitle(title).then((books) => {
+      if (Object.keys(books).length > 0) {
+        return res.status(200).json(serializeTitledBooks(books));
       } else {
         return res.status(404).json({ message: `Books with title ${title} not found` });
       }
@@ -169,11 +169,11 @@ public_users.get('/title/:title', (req, res) => {
 
   // Using async/await
   public_users.get('/title/:title', async (req, res) => {
-    const { title } = req.params;
+    const title = (req.params.title + "").toLocaleLowerCase();
     const books = await findBooksByTitle(title);
 
-    if (books.length > 0) {
-      return res.status(200).json(books);
+    if (Object.keys(books).length > 0) {
+      return res.status(200).json(serializeTitledBooks(books));
     } else {
       return res.status(404).json({ message: `Books with title ${title} not found` });
     }
@@ -181,8 +181,13 @@ public_users.get('/title/:title', (req, res) => {
 
   // Modified version of the function localed in the booksdb.js
   export const findBooksByTitle = (title) => {
-    const bks = Object.values(books).filter(book => book.title === title);
-    return Promise.resolve(bks);
+    const result = {};
+    for (const [isbn, book] of Object.entries(books)) {
+      if (book.title.toLocaleLowerCase().match(title)) {
+        result[isbn] = book;
+      }
+    }
+    return Promise.resolve(result);
   }
 */
 
