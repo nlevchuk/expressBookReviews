@@ -42,7 +42,7 @@ regd_users.post('/login', (req, res) => {
     );
     req.session.authorization = { username, accessToken };
 
-    return res.status(200).json({ message: `User ${username} successfully logged in` });
+    return res.status(200).send(`User ${username} successfully logged in`);
   } else {
     return res.status(404).json({ message: 'User with provided username and password not found. Go to /register first' });
   }
