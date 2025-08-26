@@ -97,7 +97,7 @@ public_users.get('/isbn/:isbn', (req, res) => {
   
 // Get all books based on author
 public_users.get('/author/:author', (req, res) => {
-  const { author } = req.params;
+  const author = (req.params.author + "").toLocaleLowerCase();
   const books = findBooksByAuthor(author);
 
   if (Object.keys(books).length > 0) {
@@ -141,7 +141,7 @@ public_users.get('/author/:author', (req, res) => {
 
 // Get all books based on title
 public_users.get('/title/:title', (req, res) => {
-  const { title } = req.params;
+  const title = (req.params.title + "").toLocaleLowerCase();
   const books = findBooksByTitle(title);
 
   if (Object.keys(books).length > 0) {

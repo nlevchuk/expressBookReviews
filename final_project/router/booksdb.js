@@ -18,7 +18,7 @@ export const findBookByISBN = (isbn) => books[isbn];
 export const findBooksByAuthor = (author) => {
   const result = {};
   for (const [isbn, book] of Object.entries(books)) {
-    if (book.author === author) {
+    if (book.author.toLocaleLowerCase().match(author)) {
       result[isbn] = book;
     }
   }
@@ -28,7 +28,7 @@ export const findBooksByAuthor = (author) => {
 export const findBooksByTitle = (title) => {
   const result = {};
   for (const [isbn, book] of Object.entries(books)) {
-    if (book.title === title) {
+    if (book.title.toLocaleLowerCase().match(title)) {
       result[isbn] = book;
     }
   }
