@@ -63,7 +63,7 @@ regd_users.put('/auth/review/:isbn', (req, res) => {
 
   const { username } = req.session.authorization;
   addReviewToBook(isbn, review, username);
-  return res.status(200).json({ message: `Review for "${book.title}" has been added successfully` });
+  return res.status(200).send(`Review for the book with ISBN ${isbn} has been added/updated`);
 });
 
 // Delete a book review
