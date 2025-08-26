@@ -16,7 +16,13 @@ export const getAllBooks = () => books;
 export const findBookByISBN = (isbn) => books[isbn];
 
 export const findBooksByAuthor = (author) => {
-  return Object.values(books).filter(book => book.author === author);
+  const result = {};
+  for (const [isbn, book] of Object.entries(books)) {
+    if (book.author === author) {
+      result[isbn] = book;
+    }
+  }
+  return result;
 }
 
 export const findBooksByTitle = (title) => {

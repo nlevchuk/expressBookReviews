@@ -6,6 +6,7 @@ import {
   findBooksByTitle,
 } from './booksdb.js';
 import { isValid, registerUser } from './auth_users.js';
+import { serializeAuthoredBooks } from '../serializers/book.serializer.js';
 
 const public_users = express.Router();
 
@@ -94,11 +95,10 @@ public_users.get('/isbn/:isbn', (req, res) => {
 // Get all books based on author
 public_users.get('/author/:author', (req, res) => {
   const { author } = req.params;
-  // Note! An author can have more than one book
   const books = findBooksByAuthor(author);
 
-  if (books.length > 0) {
-    return res.status(200).json(books);
+  if (Object.keys(books).length > 0) {
+    return res.status(200).json(serializeAuthoredBooks(books));
   } else {
     return res.status(404).json({ message: `Books with author ${author} not found` });
   }
