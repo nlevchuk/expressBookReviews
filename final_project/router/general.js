@@ -6,7 +6,10 @@ import {
   findBooksByTitle,
 } from './booksdb.js';
 import { isValid, registerUser } from './auth_users.js';
-import { serializeAuthoredBooks } from '../serializers/book.serializer.js';
+import {
+  serializeAuthoredBooks,
+  serializeTitledBooks,
+} from '../serializers/book.serializer.js';
 
 const public_users = express.Router();
 
@@ -139,11 +142,10 @@ public_users.get('/author/:author', (req, res) => {
 // Get all books based on title
 public_users.get('/title/:title', (req, res) => {
   const { title } = req.params;
-  // Note! More than one book can have similar titles
   const books = findBooksByTitle(title);
 
-  if (books.length > 0) {
-    return res.status(200).json(books);
+  if (Object.keys(books).length > 0) {
+    return res.status(200).json(serializeTitledBooks(books));
   } else {
     return res.status(404).json({ message: `Books with title ${title} not found` });
   }

@@ -26,7 +26,13 @@ export const findBooksByAuthor = (author) => {
 }
 
 export const findBooksByTitle = (title) => {
-  return Object.values(books).filter(book => book.title === title);
+  const result = {};
+  for (const [isbn, book] of Object.entries(books)) {
+    if (book.title === title) {
+      result[isbn] = book;
+    }
+  }
+  return result;
 }
 
 export const addReviewToBook = (isbn, review, username) => {
